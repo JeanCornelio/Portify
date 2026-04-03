@@ -1,0 +1,23 @@
+services:
+  postgres:
+    image: 'postgres:17-alpine'
+    container_name: portify_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: '${POSTGRES_DB}'
+      POSTGRES_USER: '${POSTGRES_USER}'
+      POSTGRES_PASSWORD: '${POSTGRES_PASSWORD}'
+      TZ: America/Santo_Domingo
+    ports:
+      - '5437:5432'
+    volumes:
+      - 'portify_pgdata:/var/lib/postgresql/data'
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB} -h localhost -p 5432'
+      interval: 5s
+      timeout: 5s
+      retries: 5
+volumes:
+  portify_pgdata: null
