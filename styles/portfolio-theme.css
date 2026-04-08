@@ -1,0 +1,13 @@
+[data-theme="portify"] {
+  --primary: #3b82f6;
+  --secondary: #ef4444;
+  --accent: #facc15;
+  --bg: #ffffff;
+}
+
+[data-theme="caffeine"] {
+  --primary: #ffe0c2;
+  --secondary: #081a1b;
+  --accent: #393028;
+  --bg: #2a2a2a;
+}
