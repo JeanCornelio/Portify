@@ -12,16 +12,26 @@ datasource db {
   provider = "postgresql"
 }
 
+enum SkillLevel {
+  BEGINNER     @map("beginner")
+  INTERMEDIATE @map("intermediate")
+  ADVANCED     @map("advanced")
+  EXPERT       @map("expert")
+
+  @@map("skill_level")
+}
+
 model User {
-  id            String    @id
+  id            String     @id
   name          String
   email         String
-  emailVerified Boolean   @default(false)
+  emailVerified Boolean    @default(false)
   image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
   sessions      Session[]
   accounts      Account[]
+  portfolio     portfolio?
 
   @@unique([email])
   @@map("user")
@@ -73,4 +83,98 @@ model Verification {
 
   @@index([identifier])
   @@map("verification")
+}
+
+model portfolio {
+  id          String       @id
+  userId      String       @unique
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String
+  isPublic    Boolean      @default(false)
+  shareToken  String       @unique //portfolio/[token]
+  description String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  experiences experience[]
+  projects    project[]
+  skills      skill[]
+  themeId     String?
+  theme       themes?      @relation(fields: [themeId], references: [id])
+
+  @@index([userId])
+}
+
+model experience {
+  id          String    @id
+  title       String
+  description String?
+  company     String?
+  startDate   DateTime?
+  endDate     DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  portfolioId String
+  portfolio   portfolio @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+
+  @@index([portfolioId])
+}
+
+model project {
+  id                  String              @id
+  title               String
+  description         String?
+  isPersonal          Boolean             @default(true)
+  projectTechnologies ProjectTechnology[]
+  url                 String?
+  image               String?
+  repository          String?
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  portfolioId         String
+  portfolio           portfolio           @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+
+  @@index([portfolioId])
+}
+
+model skill {
+  id          String     @id
+  name        String
+  level       SkillLevel @default(BEGINNER) // BEGINNER, INTERMEDIATE, ADVANCED, EXPERT
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  portfolioId String
+  portfolio   portfolio  @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+
+  @@index([portfolioId])
+}
+
+model themes {
+  id         String      @id
+  name       String      @unique
+  colors     String[]
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  portfolios portfolio[]
+}
+
+model technologies {
+  id                String              @id
+  name              String              @unique
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  ProjectTechnology ProjectTechnology[]
+}
+
+//Intermediate table for many-to-many relationship between project and technologies
+//it is helpful for storing additional information about the relationship in the future if needed
+model ProjectTechnology {
+  id           String       @id
+  projectId    String
+  technologyId String
+  project      project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  technology   technologies @relation(fields: [technologyId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, technologyId])
+  @@index([projectId])
+  @@index([technologyId])
 }
