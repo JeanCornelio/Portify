@@ -9,16 +9,17 @@ import {
   PopoverTitle,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { ColorOption } from "./options/color-option";
 
 const toolbarOptions: customPopoverProps[] = [
   {
     id: 1,
-    titleButton: "Themes",
+    titleButton: "Colors",
     icon: () => <Palette />,
-    titleHeader: "10 Themes",
+    titleHeader: "Colors Theme",
     description: "Select a theme to customize the appearance of the interface.",
     variantButton: "outline",
-    content: () => <h2>Theme Content</h2>,
+    content: () => <ColorOption />,
   },
   {
     id: 2,
