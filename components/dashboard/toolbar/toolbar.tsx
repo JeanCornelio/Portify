@@ -16,7 +16,7 @@ const toolbarOptions: customPopoverProps[] = [
     id: 1,
     titleButton: "Colors",
     icon: () => <Palette />,
-    titleHeader: "10 Colors Theme",
+    titleHeader: "Colors Theme",
     description: "Select a theme to customize the appearance of the interface.",
     variantButton: "outline",
     content: () => <ColorOption />,
