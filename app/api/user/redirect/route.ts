@@ -1,9 +1,11 @@
 import { getAccount } from "@/lib/actions/auth";
+import { generatePortfolio } from "@/lib/actions/portfolio";
+import prisma from "@/lib/prisma";
 
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
-  const account = await getAccount();
+  const { account } = await getAccount();
 
   console.log(account);
 
@@ -11,11 +13,28 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
-  return NextResponse.redirect(new URL("/dashboard/portfolio", request.url));
+  const portfolio = await prisma.portfolio.findFirst({
+    where: {
+      userId: account.id,
+    },
+  });
 
   /*Validate if the user have a portfolio*/
 
-  /* have : Redirect to saved  */
+  /* Implement a loading state */
 
-  /* not have : Redirect to create portfolio */
+  if (!portfolio) {
+    await generatePortfolio();
+
+    /* not have : Redirect to Portfolio : generate portfolio Data */
+    //Create Portfolio Data
+    const newPortfolio = 1;
+    return NextResponse.redirect(
+      new URL(`/dashboard/portfolio/${newPortfolio}`, request.url),
+    );
+  }
+  /* have : Redirect to Portfolio With Data */
+  return NextResponse.redirect(
+    new URL(`/dashboard/portfolio/${portfolio.id}`, request.url),
+  );
 }

@@ -44,8 +44,11 @@ export const getAccount = async () => {
       userId: session?.user?.id,
       providerId: "github",
     },
+    include: {
+      user: true,
+    },
   });
   if (!account?.accessToken) throw new Error("No GitHub token found");
 
-  return { account, user: session?.user };
+  return account;
 };

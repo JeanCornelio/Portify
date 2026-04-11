@@ -1,12 +1,13 @@
 import { getUserSession } from "@/lib/actions/auth";
-import { generatePortfolio } from "@/lib/actions/github-info";
+import { getReadme } from "@/lib/actions/github-info";
+
 import "@/styles/portfolio-theme.css";
 
 export default async function Page() {
   const session = await getUserSession();
   const { user } = session;
 
-  //await generatePortfolio();
+  await getReadme();
 
   return (
     <div className="max-w-7xl mx-auto " data-theme="Portify">
